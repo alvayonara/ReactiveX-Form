@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
+import io.reactivex.functions.Function3
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -45,6 +47,29 @@ class MainActivity : AppCompatActivity() {
         )
         passwordConfirmationStream.subscribe {
             showPasswordConfirmationAlert(it)
+        }
+
+        val invalidFieldsStream = Observable.combineLatest(
+            emailStream,
+            passwordStream,
+            passwordConfirmationStream,
+            Function3 { emailInvalid: Boolean, passwordInvalid: Boolean, passwordConfirmationInvalid: Boolean ->
+                !emailInvalid && !passwordInvalid && !passwordConfirmationInvalid
+            }
+        )
+        invalidFieldsStream.subscribe { isValid ->
+            if (isValid) {
+                btn_register.isEnabled = true
+                btn_register.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent))
+            } else {
+                btn_register.isEnabled = false
+                btn_register.setBackgroundColor(
+                    ContextCompat.getColor(
+                        this,
+                        android.R.color.darker_gray
+                    )
+                )
+            }
         }
     }
 
