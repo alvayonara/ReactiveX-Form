@@ -1,18 +1,30 @@
 package com.dicoding.myreactiveform
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.jakewharton.rxbinding2.widget.RxTextView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val emailStream = RxTextView.textChanges(ed_email)
+            .skipInitialValue()
+            .map { email ->
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches()
+            }
+        emailStream.subscribe {
+            showEmailExistAlert(it)
+        }
     }
 
     private fun showEmailExistAlert(isValid: Boolean) {
