@@ -25,6 +25,15 @@ class MainActivity : AppCompatActivity() {
         emailStream.subscribe {
             showEmailExistAlert(it)
         }
+
+        val passwordStream = RxTextView.textChanges(ed_password)
+            .skipInitialValue()
+            .map { password ->
+                password.length < 6
+            }
+        passwordStream.subscribe {
+            showPasswordMinimalAlert(it)
+        }
     }
 
     private fun showEmailExistAlert(isValid: Boolean) {
