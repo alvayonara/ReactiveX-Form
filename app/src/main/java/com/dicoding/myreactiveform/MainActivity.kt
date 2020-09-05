@@ -17,11 +17,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Menggunakan RxTextView.textChanges(ed_email) untuk membaca perubahan pada EditText dan mengubahnya menjadi data stream.
+        // Operator skipInitialValue() untuk menghiraukan input awal agar aplikasi tidak langsung menampilkan eror pada saat pertama kali dijalankan.
+        // Operator map dan memeriksa apakah format valid.
         val emailStream = RxTextView.textChanges(ed_email)
             .skipInitialValue()
             .map { email ->
                 !Patterns.EMAIL_ADDRESS.matcher(email).matches()
             }
+        // Saat subscribe, memanggil fungsi showEmailExistAlert(it) untuk menampilkan peringatan jika hasilnya TRUE.
         emailStream.subscribe {
             showEmailExistAlert(it)
         }
@@ -35,6 +39,7 @@ class MainActivity : AppCompatActivity() {
             showPasswordMinimalAlert(it)
         }
 
+        // Operator merge hanya menggabungkan datanya saja.
         val passwordConfirmationStream = Observable.merge(
             RxTextView.textChanges(ed_password)
                 .map { password ->
@@ -49,6 +54,8 @@ class MainActivity : AppCompatActivity() {
             showPasswordConfirmationAlert(it)
         }
 
+        // Operator combineLatest menggabungkan dan mengubah data di dalamnya.
+        // Ex: Operator combineLatest untuk menggabungkan ketiga data stream dan menghasilkan 1 output data stream baru.
         val invalidFieldsStream = Observable.combineLatest(
             emailStream,
             passwordStream,
