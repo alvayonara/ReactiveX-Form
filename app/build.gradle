@@ -35,4 +35,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.material:material:1.2.0'
+
+    // RxJava
+    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
+
+    // RxBinding adalah library yang digunakan untuk membuat Observable
+    // dari komponen User Interface seperti EditText, SearchView dan Radio Group.
+    implementation "com.jakewharton.rxbinding2:rxbinding:2.0.0"
 }
