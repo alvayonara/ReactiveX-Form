@@ -2,12 +2,10 @@ package com.dicoding.myreactiveform
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +31,20 @@ class MainActivity : AppCompatActivity() {
             }
         passwordStream.subscribe {
             showPasswordMinimalAlert(it)
+        }
+
+        val passwordConfirmationStream = Observable.merge(
+            RxTextView.textChanges(ed_password)
+                .map { password ->
+                    password.toString() != ed_confirm_password.text.toString()
+                },
+            RxTextView.textChanges(ed_confirm_password)
+                .map { confirmPassword ->
+                    confirmPassword.toString() != ed_password.text.toString()
+                }
+        )
+        passwordConfirmationStream.subscribe {
+            showPasswordConfirmationAlert(it)
         }
     }
 
